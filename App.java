@@ -154,66 +154,92 @@ class Kniffel {
     private static int getValidDiceSum(Players actualPlayers, Integer playerNumber, String goalName) {
         Integer goalValue = 0;
 
+        // alle Würfel aufsummieren
         if (goalName.equals(Language.CHANCE)) {
             for (int d = 0; d < 5; d++) {
                 goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
             }
         }
         
+        // Finde 5 gleiche Würfel, wenn ja 50 Punkte
         if (goalName.equals(Language.KNIFFEL)) {
-            Integer[] dices = dicesToArray(actualPlayers, playerNumber);
-            // Finde 5 gleiche Würfel, wenn ja 50 Punkte
+            Integer[] dices = dicesToArray(actualPlayers, playerNumber);            
             Boolean valid = Arrays.asList(dices).stream().allMatch(t -> t.equals(dices[1]));
             if (valid.equals(true)) goalValue = 50;      
             else goalValue = 0;
         }
         
-        if (goalName.equals(Language.THREE_EQUALS)) {                      
-            // Finde 3 gleiche Würfel und addiere alle Augenzahlen                        
-            Boolean valid = countEqualDices(actualPlayers, playerNumber, 3);            
-            
+        // Finde 3 gleiche Würfel und addiere alle Augenzahlen    
+        if (goalName.equals(Language.THREE_EQUALS)) {                                                      
+            Boolean valid = countEqualDices(actualPlayers, playerNumber, 3);                        
             if (valid.equals(true)) {
                 for (int d = 0; d < 5; d++) {
                     goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
                 }   
-            } else {
-                goalValue = 0;
-            }
+            } else goalValue = 0;
         }
 
-        if (goalName.equals(Language.FOUR_EQUALS)) {
-            // Finde 4 gleiche Würfel und addiere alle Augenzahlen            
-            Boolean valid = countEqualDices(actualPlayers, playerNumber, 4);
-            
+        // Finde 4 gleiche Würfel und addiere alle Augenzahlen  
+        if (goalName.equals(Language.FOUR_EQUALS)) {                      
+            Boolean valid = countEqualDices(actualPlayers, playerNumber, 4);            
             if (valid.equals(true)) {            
                 for (int d = 0; d < 5; d++) {
                     goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
                 }
-            } else {
-                goalValue = 0;
-            }
+            } else goalValue = 0;
         }
 
+        // Finde ein Paar und einen Drilling, wenn ja, 25 Punkte
         if (goalName.equals(Language.FULL_HOUSE)) {            
             Boolean valid = false;
-            // Finde ein Paar und einen Drilling, wenn ja, 25 Punkte
-            if (valid.equals(true)) {
-                //TODO: Fill with code (Full house)
-                goalValue = 25;                
-            } else {
-                goalValue = 0;
+            Boolean valid1 = false; // Pair of three exists
+            Boolean valid2 = false; // Pair of two exists
+            
+            // wenn es ein Kniffel ist, ist es auch ein Full House
+            Integer[] dices = dicesToArray(actualPlayers, playerNumber);
+            valid = Arrays.asList(dices).stream().allMatch(t -> t.equals(dices[1]));
+
+            if (!valid) {
+                Integer count = 0;
+                Integer pairOfThree = 0;
+                
+                // prüfe ob es einen Drilling gibt
+                for (int c = 1; c < 7; c++) {
+                    Integer tempCount = 0;
+                    for (int d = 0; d < 5; d++) if (dices[d] == c) tempCount++;
+                    if (count < 3 ) {
+                        count = tempCount;
+                        pairOfThree = c;
+                    }                
+                }
+                if (count > 2) valid1 = true;
+
+                // gibt es noch ein weiteres Paar
+                if (valid1) {
+                    for (int c = 1; c < 7; c++) {
+                        if (c != pairOfThree) {
+                            Integer tempCount = 0;
+                            for (int d = 0; d < 5; d++) if (dices[d] == c) tempCount++;
+                            if (count < 3 ) count = tempCount;       
+                        }
+                    }
+                    if (count > 1) valid2 = true;
+                }
+
+                if ((valid1) && (valid2)) valid = true;
             }
+            if (valid.equals(true)) goalValue = 25;                
+            else goalValue = 0;
         }
 
+        // Finde 4 aufeinander folgende Würfel, wenn ja 30 Punkte
         if (goalName.equals(Language.SMALL_STREET)) {
             Integer[] dices = dicesToArray(actualPlayers, playerNumber);
             Arrays.sort(dices);     
 
-            Boolean valid1 = true;
-            Boolean valid2 = true;
-
-            // Finde 4 aufeinander folgende Würfel, wenn ja 30 Punkte
-
+            Boolean valid1 = true; // small street within first 4 dices
+            Boolean valid2 = true; // small street within last 4 dices
+            
             // prüfe die ersten 4 Würfel
             for (int i = 1; i < dices.length -1; i++) {
                 int dice1 = dices[i-1];
@@ -228,19 +254,16 @@ class Kniffel {
                 if ( dice2 != dice1 + 1) valid2 = false;
             }
 
-            if ((valid1.equals(true)) || (valid2.equals(true)))  {
-            
-                goalValue = 30;   
-            } else {
-                goalValue = 0;
-            }
+            if ((valid1.equals(true)) || (valid2.equals(true))) goalValue = 30;   
+            else goalValue = 0;
         }
-
+        
+        // Finde 5 aufeinander folgende Würfel, wenn ja 40 Punkte
         if (goalName.equals(Language.BIG_STREET)) {
             Integer[] dices = dicesToArray(actualPlayers, playerNumber);
             Arrays.sort(dices);            
             Boolean valid = true;
-            // Finde 5 aufeinander folgende Würfel, wenn ja 40 Punkte
+            
             for (int i = 1; i < dices.length; i++) {
                 int dice1 = dices[i-1];
                 int dice2 = dices[i];
@@ -266,7 +289,6 @@ class Kniffel {
                 }
             }      
         }
-
         return goalValue;
     }
 
@@ -277,15 +299,10 @@ class Kniffel {
         goalValue = getValidDiceSum(actualPlayers, playerNumber, goalName);        
 
         for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
-            if (actualPlayers.player.get(playerNumber).sheet.game.get(0).set.key.equals(goalName)) {
-                keyExists = true;
-            }
+            if (actualPlayers.player.get(playerNumber).sheet.game.get(0).set.key.equals(goalName)) keyExists = true;
         }        
         
-        if (keyExists) {
-            // Wurf existiert
-            return false;
-        }
+        if (keyExists) return false; // Wurf existiert
         else {
             Goal newGoal = new Goal();
             newGoal.set = new Tuple<>(goalName, goalValue);        
@@ -339,8 +356,7 @@ class Kniffel {
                 if (listPart2[j].equals(actualPlayers.player.get(playerNumber).sheet.game.get(i).set.key)) {
                     if (log) System.out.print(actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value);  
                     table[listPart1.length + 3 + j] = actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;      
-                }
-                else {
+                } else {
                     // Not found
                 }
             }
@@ -370,14 +386,12 @@ class Kniffel {
             String key = actualPlayers.player.get(playerNumber).sheet.game.get(i).set.key;
             if (Arrays.asList(listPart1).contains(key)) {
                 part1 += actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;
-            }
-            else {
+            } else {
                 // Not found
             }
             if (Arrays.asList(listPart2).contains(key)) {
                 part2 += actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;
-            }
-            else {
+            } else {
                 // Not found
             }
         }
@@ -397,22 +411,32 @@ class Kniffel {
         
         addPlayer(knifflers, "Jarvis");
     
+        System.out.println("Würfle zufällig:");
+        System.out.println(Language.HORIZONTAL_RULER);
         for (int d = 0; d < 5; d++) {
             knifflers.player.get(0).deck.dice[d].roll();
             System.out.println(Language.DICE + d + " : " + knifflers.player.get(0).deck.dice[d].getCount());   
         }
 
         System.out.println("");
+        System.out.println("Nun bauen wir uns die Würfel, wie wir sie brauchen:");
+        System.out.println(Language.HORIZONTAL_RULER);
+        System.out.println("");
 
         knifflers.player.get(0).deck.dice[0].setCount(3);
-        knifflers.player.get(0).deck.dice[1].setCount(2);
-        knifflers.player.get(0).deck.dice[2].setCount(1);
-        knifflers.player.get(0).deck.dice[3].setCount(4);
-        knifflers.player.get(0).deck.dice[4].setCount(6);
+        knifflers.player.get(0).deck.dice[1].setCount(3);
+        knifflers.player.get(0).deck.dice[2].setCount(3);
+        knifflers.player.get(0).deck.dice[3].setCount(3);
+        knifflers.player.get(0).deck.dice[4].setCount(3);
 
         for (int d = 0; d < 5; d++) {            
             System.out.println(Language.DICE + d + " : " + knifflers.player.get(0).deck.dice[d].getCount());   
         }
+
+        System.out.println("");
+        System.out.println("Dieser Wurf könnte eines dieser Ergbnisse sein:");
+        System.out.println(Language.DOUBLE_RULER);
+        System.out.println("");
 
         addGoal(knifflers, 0, Language.ONES);
         addGoal(knifflers, 0, Language.TWOS);
@@ -426,13 +450,15 @@ class Kniffel {
         addGoal(knifflers, 0, Language.SMALL_STREET);
         addGoal(knifflers, 0, Language.BIG_STREET);
         addGoal(knifflers, 0, Language.KNIFFEL);
-        addGoal(knifflers, 0, Language.CHANCE);
-        
+        addGoal(knifflers, 0, Language.CHANCE);        
+
         for (int x = 0; x < knifflers.player.size(); x++) {
             sumParts(knifflers, x);
             table = scoreTable(knifflers, x, true);             
         }       
 
+        System.out.println("Ergebnisliste zur Weiterverarbeitung:");
+        System.out.println(Language.DASHED_RULER);
         System.out.println(Arrays.toString(table));
     }
 }
