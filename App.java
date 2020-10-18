@@ -8,8 +8,7 @@ class Language {
     static String FOURS = "Vierer";
     static String FIFES = "Fünfer";
     static String SIXES = "Sechser";
-    static String ONE_PAIR = "1 Paar";
-    static String TWO_PAIR = "2 Paar";
+
     static String THREE_EQUALS = "Drei Gleiche";
     static String FOUR_EQUALS = "Vier Gleiche";
     static String FULL_HOUSE = "Volles Haus";
@@ -17,6 +16,22 @@ class Language {
     static String BIG_STREET = "Große Straße";
     static String KNIFFEL = "Kniffel";
     static String CHANCE = "Chance";
+
+    static String HORIZONTAL_RULER = "-----------------------";
+    static String DASHED_RULER     = "- - - - - - - - - - - -";
+    static String DOUBLE_RULER     = "=======================";
+
+    static String PART_SUM_PART1 = "Teilsumme Teil 1: ";
+    static String SUM_PART1 = "Summe Teil 1: ";
+    static String SUM_PART2 = "Summe Teil 2: ";
+    static String BONUS = "Bonus Teil 1: ";
+    static String SUM = "Gesamtsumme : ";
+
+    static String DICE = "Würfel";
+
+    Language(){
+        // only language definition
+    }
 }    
 
 class Tuple<TypeKey, TypeValue> {
@@ -120,39 +135,23 @@ class Kniffel {
         
         if (goalName.equals(Language.KNIFFEL)) {
             Boolean valid = true;
-            // Finde 5 gleiche Würfel und addiere die Augenzahlen
+            // Finde 5 gleiche Würfel, wenn ja 50 Punkte
             if (valid.equals(true)) {
-                //TODO: Fill with code                
+                //TODO: Fill with code (Kniffel)        
+                goalValue = 50;      
             } else {
                 goalValue = 0;
             }
         }
         
-        if (goalName.equals(Language.ONE_PAIR)) {
-            Boolean valid = true;
-            // Finde 2 gleiche Würfel und addiere die Augenzahlen des höchsten Paars
-            if (valid.equals(true)) {
-                //TODO: Fill with code     
-            } else {
-                goalValue = 0;
-            }
-        }
-
-        if (goalName.equals(Language.TWO_PAIR)) {
-            Boolean valid = true;
-            // Finde 2 x 2 gleiche Würfel und addiere die Augenzahlen der beiden höchsten Paare
-            if (valid.equals(true)) {
-                //TODO: Fill with code     
-            } else {
-                goalValue = 0;
-            }
-        }
-
         if (goalName.equals(Language.THREE_EQUALS)) {
             Boolean valid = true;
-            // Finde 3 gleiche Würfel und addiere die Augenzahlen
+            // Finde 3 gleiche Würfel und addiere alle Augenzahlen
             if (valid.equals(true)) {
-                //TODO: Fill with code     
+                //TODO: Fill with code (Three equals)
+                for (int d = 0; d < 5; d++) {
+                    goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
+                }   
             } else {
                 goalValue = 0;
             }
@@ -160,9 +159,12 @@ class Kniffel {
 
         if (goalName.equals(Language.FOUR_EQUALS)) {
             Boolean valid = true;
-            // Finde 4 gleiche Würfel und addiere die Augenzahlen
+            // Finde 4 gleiche Würfel und addiere alle Augenzahlen
             if (valid.equals(true)) {
-                //TODO: Fill with code     
+                //TODO: Fill with code (Four equals)
+                for (int d = 0; d < 5; d++) {
+                    goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
+                }
             } else {
                 goalValue = 0;
             }
@@ -170,11 +172,10 @@ class Kniffel {
 
         if (goalName.equals(Language.FULL_HOUSE)) {            
             Boolean valid = true;
-            // Finde ein Paar und einen Drilling, wenn ja, addiere alle Augenzahlen
+            // Finde ein Paar und einen Drilling, wenn ja, 25 Punkte
             if (valid.equals(true)) {
-                for (int d = 0; d < 5; d++) {
-                    goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
-                }
+                //TODO: Fill with code (Full house)
+                goalValue = 25;                
             } else {
                 goalValue = 0;
             }
@@ -182,9 +183,10 @@ class Kniffel {
 
         if (goalName.equals(Language.SMALL_STREET)) {
             Boolean valid = true;
-            // Finde 4 aufeinander folgende Würfel und addiere deren Augenzahlen
+            // Finde 4 aufeinander folgende Würfel, wenn ja 30 Punkte
             if (valid.equals(true)) {
-                //TODO: Fill with code     
+                //TODO: Fill with code (Small street)
+                goalValue = 30;   
             } else {
                 goalValue = 0;
             }
@@ -192,11 +194,10 @@ class Kniffel {
 
         if (goalName.equals(Language.BIG_STREET)) {
             Boolean valid = true;
-            // Finde 5 aufeinander folgende Würfel, wenn ja, addiere alle Augenzahlen
-            if (valid.equals(true)) {
-                for (int d = 0; d < 5; d++) {
-                    goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
-                }
+            // Finde 5 aufeinander folgende Würfel, wenn ja 40 Punkte
+            if (valid.equals(true)) {                
+                //TODO: Fill with code (Big street)
+                goalValue = 40;                
             } else {
                 goalValue = 0;
             }
@@ -234,7 +235,7 @@ class Kniffel {
         }        
         
         if (keyExists) {
-            System.out.println("Wurf existiert");
+            // Wurf existiert
             return false;
         }
         else {
@@ -248,10 +249,6 @@ class Kniffel {
     }
 
     private static int[] scoreTable(Players actualPlayers, Integer playerNumber, boolean log) {
-        final String HORIZONTAL_RULER = "-----------------------";
-        final String DASHED_RULER     = "- - - - - - - - - - - -";
-        final String DOUBLE_RULER     = "=======================";
-
         String[] listPart1 = new KniffelSheet().part1;
         String[] listPart2 = new KniffelSheet().part2;
 
@@ -259,7 +256,7 @@ class Kniffel {
 
         if (log) {
             System.out.println(actualPlayers.player.get(playerNumber).name);
-            System.out.println(HORIZONTAL_RULER);
+            System.out.println(Language.HORIZONTAL_RULER);
         }
 
         for (int j=0; j < listPart1.length; j++) {
@@ -277,12 +274,12 @@ class Kniffel {
         }
 
         if (log) {
-            System.out.println(HORIZONTAL_RULER);
-            System.out.println("Teilsumme Teil 1: " + actualPlayers.player.get(playerNumber).partSumPart1);
-            System.out.println("Bonus Teil 1: " + actualPlayers.player.get(playerNumber).bonusPart1);
-            System.out.println(DOUBLE_RULER);
-            System.out.println("Summe Teil 1: " + actualPlayers.player.get(playerNumber).sumPart1);
-            System.out.println(DASHED_RULER);
+            System.out.println(Language.HORIZONTAL_RULER);
+            System.out.println(Language.PART_SUM_PART1 + actualPlayers.player.get(playerNumber).partSumPart1);
+            System.out.println(Language.BONUS + actualPlayers.player.get(playerNumber).bonusPart1);
+            System.out.println(Language.DOUBLE_RULER);
+            System.out.println(Language.SUM_PART1 + actualPlayers.player.get(playerNumber).sumPart1);
+            System.out.println(Language.DASHED_RULER);
         }
         table[listPart1.length + 1] = actualPlayers.player.get(playerNumber).partSumPart1;
         table[listPart1.length + 2] = actualPlayers.player.get(playerNumber).bonusPart1;
@@ -302,10 +299,10 @@ class Kniffel {
             if (log) System.out.println("");
         }
         if (log) {
-            System.out.println(HORIZONTAL_RULER);
-            System.out.println("Summe Teil 2: " + actualPlayers.player.get(playerNumber).sumPart2);
-            System.out.println(DOUBLE_RULER);
-            System.out.println("Gesamtsumme : " + actualPlayers.player.get(playerNumber).sum);
+            System.out.println(Language.HORIZONTAL_RULER);
+            System.out.println(Language.SUM_PART2 + actualPlayers.player.get(playerNumber).sumPart2);
+            System.out.println(Language.DOUBLE_RULER);
+            System.out.println(Language.SUM + actualPlayers.player.get(playerNumber).sum);
             System.out.println("");
         }
         table[listPart1.length + 3 + listPart2.length + 1] = actualPlayers.player.get(playerNumber).sumPart2;
@@ -351,12 +348,10 @@ class Kniffel {
         int[] table = new int[25];
         
         addPlayer(knifflers, "Jarvis");
-        // addPlayer(knifflers, "Darwin");
-        // addPlayer(knifflers, "Thorsten");
     
         for (int d = 0; d < 5; d++) {
             knifflers.player.get(0).deck.dice[d].roll();
-            System.out.println("Würfel " + d + " : " + knifflers.player.get(0).deck.dice[d].getCount());   
+            System.out.println(Language.DICE + d + " : " + knifflers.player.get(0).deck.dice[d].getCount());   
         }
 
         System.out.println("");
