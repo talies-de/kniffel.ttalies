@@ -135,7 +135,8 @@ class Kniffel {
         if (goalName.equals("5x gleiche Augenzahl")) {
             Boolean valid = true;
             // Finde 5 gleiche Würfel und addiere die Augenzahlen
-            if (valid) {
+            if (valid.equals(true)) {
+                //TODO: Fill with code                
             } else {
                 goalValue = 0;
             }
@@ -144,7 +145,8 @@ class Kniffel {
         if (goalName.equals("1 Paar")) {
             Boolean valid = true;
             // Finde 2 gleiche Würfel und addiere die Augenzahlen des höchsten Paars
-            if (valid) {
+            if (valid.equals(true)) {
+                //TODO: Fill with code     
             } else {
                 goalValue = 0;
             }
@@ -153,7 +155,8 @@ class Kniffel {
         if (goalName.equals("2 Paar")) {
             Boolean valid = true;
             // Finde 2 x 2 gleiche Würfel und addiere die Augenzahlen der beiden höchsten Paare
-            if (valid) {
+            if (valid.equals(true)) {
+                //TODO: Fill with code     
             } else {
                 goalValue = 0;
             }
@@ -162,7 +165,8 @@ class Kniffel {
         if (goalName.equals("Drei Gleiche")) {
             Boolean valid = true;
             // Finde 3 gleiche Würfel und addiere die Augenzahlen
-            if (valid) {
+            if (valid.equals(true)) {
+                //TODO: Fill with code     
             } else {
                 goalValue = 0;
             }
@@ -171,7 +175,8 @@ class Kniffel {
         if (goalName.equals("Vier Gleiche")) {
             Boolean valid = true;
             // Finde 4 gleiche Würfel und addiere die Augenzahlen
-            if (valid) {
+            if (valid.equals(true)) {
+                //TODO: Fill with code     
             } else {
                 goalValue = 0;
             }
@@ -180,7 +185,7 @@ class Kniffel {
         if (goalName.equals("Volles Haus")) {            
             Boolean valid = true;
             // Finde ein Paar und einen Drilling, wenn ja, addiere alle Augenzahlen
-            if (valid) {
+            if (valid.equals(true)) {
                 for (int d = 0; d < 5; d++) {
                     goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
                 }
@@ -192,7 +197,8 @@ class Kniffel {
         if (goalName.equals("Kleine Straße")) {
             Boolean valid = true;
             // Finde 4 aufeinander folgende Würfel und addiere deren Augenzahlen
-            if (valid) {
+            if (valid.equals(true)) {
+                //TODO: Fill with code     
             } else {
                 goalValue = 0;
             }
@@ -201,7 +207,7 @@ class Kniffel {
         if (goalName.equals("Große Straße")) {
             Boolean valid = true;
             // Finde 5 aufeinander folgende Würfel, wenn ja, addiere alle Augenzahlen
-            if (valid) {
+            if (valid.equals(true)) {
                 for (int d = 0; d < 5; d++) {
                     goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
                 }
@@ -362,17 +368,17 @@ class Kniffel {
         int[] table = new int[25];
         
         addPlayer(knifflers, "Jarvis");
-        // addPlayer(knifflers, "Darwin");
-        // addPlayer(knifflers, "Thorsten");
+        addPlayer(knifflers, "Darwin");
+        addPlayer(knifflers, "Thorsten");
 
-        // addGoal(knifflers, 0, "Einer", 11);
-        // addGoal(knifflers, 0, "Zweier", 22);
+        addGoal(knifflers, 0, "Einer", 11);
+        addGoal(knifflers, 0, "Zweier", 22);
         
-        // addGoal(knifflers, 1, "Dreier", 44);
-        // addGoal(knifflers, 1, "Fünfer", 44);
+        addGoal(knifflers, 1, "Dreier", 44);
+        addGoal(knifflers, 1, "Fünfer", 44);
 
-        // addGoal(knifflers, 2, "Chance", 44);
-        // addGoal(knifflers, 2, "Volles Haus", 44);
+        addGoal(knifflers, 2, "Chance", 44);
+        addGoal(knifflers, 2, "Volles Haus", 44);
     
         for (int d = 0; d < 5; d++) {
             knifflers.player.get(0).deck.dice[d].roll();
