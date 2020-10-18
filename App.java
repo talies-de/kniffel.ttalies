@@ -16,16 +16,16 @@ class KniffelSheet {
 }
 
 class Goal {
-    Tuple<String, Integer> gameset;
+    Tuple<String, Integer> set;
 }
 
 class Sheet {
-    ArrayList<Goal> gameSheet = new ArrayList<>();
+    ArrayList<Goal> game = new ArrayList<>();
 }
 
 class Player {
     String name;
-    Sheet personalSheet;
+    Sheet sheet;
     Integer sumPart1 = 0;
     Integer partSumPart1 = 0;
     Integer sumPart2 = 0;
@@ -35,7 +35,7 @@ class Player {
 }
 
 class Players {
-    ArrayList<Player> playerSheet = new ArrayList<>();
+    ArrayList<Player> player = new ArrayList<>();
 }
 
 class Dice {
@@ -82,18 +82,18 @@ class DiceDeck {
 class Kniffel {
 
     private static int addPlayer(Players actualPlayers, String name) {
-        Integer currentSize = actualPlayers.playerSheet.size();
+        Integer currentSize = actualPlayers.player.size();
         Player player = new Player();
         player.name = name;
-        player.personalSheet = new Sheet();        
-        actualPlayers.playerSheet.add(currentSize, player);        
-        return actualPlayers.playerSheet.size();
+        player.sheet = new Sheet();        
+        actualPlayers.player.add(currentSize, player);        
+        return actualPlayers.player.size();
     }
     
     private static boolean addGoal(Players actualPlayers, Integer playerNumber, String goalName, Integer goalValue) {
         Boolean keyExists = false;
-        for (int i = 0; i < actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.size(); i++) {
-            if (actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(0).gameset.key.equals(goalName)) {
+        for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
+            if (actualPlayers.player.get(playerNumber).sheet.game.get(0).set.key.equals(goalName)) {
                 keyExists = true;
             }
         }        
@@ -104,10 +104,10 @@ class Kniffel {
         }
         else {
             Goal newGoal = new Goal();
-            newGoal.gameset = new Tuple<>(goalName, goalValue);        
-            Sheet oldSheet = actualPlayers.playerSheet.get(playerNumber).personalSheet;
-            oldSheet.gameSheet.add(newGoal);
-            actualPlayers.playerSheet.get(playerNumber).personalSheet = oldSheet;
+            newGoal.set = new Tuple<>(goalName, goalValue);        
+            Sheet oldSheet = actualPlayers.player.get(playerNumber).sheet;
+            oldSheet.game.add(newGoal);
+            actualPlayers.player.get(playerNumber).sheet = oldSheet;
             return true;
         }
     }
@@ -123,16 +123,16 @@ class Kniffel {
         int[] table = new int[listPart1.length + listPart2.length + 5];
 
         if (log) {
-            System.out.println(actualPlayers.playerSheet.get(playerNumber).name);
+            System.out.println(actualPlayers.player.get(playerNumber).name);
             System.out.println(HORIZONTAL_RULER);
         }
 
         for (int j=0; j < listPart1.length; j++) {
             if (log) System.out.print(listPart1[j] + " : ");
-            for (int i = 0; i < actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.size(); i++) {                
-                if (listPart1[j].equals(actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(i).gameset.key)) {
-                    if (log) System.out.print(actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(i).gameset.value);  
-                    table[j] = actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(i).gameset.value;      
+            for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {                
+                if (listPart1[j].equals(actualPlayers.player.get(playerNumber).sheet.game.get(i).set.key)) {
+                    if (log) System.out.print(actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value);  
+                    table[j] = actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;      
                 }
                 else {
                     // Not found
@@ -143,22 +143,22 @@ class Kniffel {
 
         if (log) {
             System.out.println(HORIZONTAL_RULER);
-            System.out.println("Teilsumme Teil 1: " + actualPlayers.playerSheet.get(playerNumber).partSumPart1);
-            System.out.println("Bonus Teil 1: " + actualPlayers.playerSheet.get(playerNumber).bonusPart1);
+            System.out.println("Teilsumme Teil 1: " + actualPlayers.player.get(playerNumber).partSumPart1);
+            System.out.println("Bonus Teil 1: " + actualPlayers.player.get(playerNumber).bonusPart1);
             System.out.println(DOUBLE_RULER);
-            System.out.println("Summe Teil 1: " + actualPlayers.playerSheet.get(playerNumber).sumPart1);
+            System.out.println("Summe Teil 1: " + actualPlayers.player.get(playerNumber).sumPart1);
             System.out.println(DASHED_RULER);
         }
-        table[listPart1.length + 1] = actualPlayers.playerSheet.get(playerNumber).partSumPart1;
-        table[listPart1.length + 2] = actualPlayers.playerSheet.get(playerNumber).bonusPart1;
-        table[listPart1.length + 3] = actualPlayers.playerSheet.get(playerNumber).sumPart1;
+        table[listPart1.length + 1] = actualPlayers.player.get(playerNumber).partSumPart1;
+        table[listPart1.length + 2] = actualPlayers.player.get(playerNumber).bonusPart1;
+        table[listPart1.length + 3] = actualPlayers.player.get(playerNumber).sumPart1;
 
         for (int j=0; j < listPart2.length; j++) {
             if (log) System.out.print(listPart2[j] + " : ");
-            for (int i = 0; i < actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.size(); i++) {                
-                if (listPart2[j].equals(actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(i).gameset.key)) {
-                    if (log) System.out.print(actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(i).gameset.value);  
-                    table[listPart1.length + 3 + j] = actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(i).gameset.value;      
+            for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {                
+                if (listPart2[j].equals(actualPlayers.player.get(playerNumber).sheet.game.get(i).set.key)) {
+                    if (log) System.out.print(actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value);  
+                    table[listPart1.length + 3 + j] = actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;      
                 }
                 else {
                     // Not found
@@ -168,13 +168,13 @@ class Kniffel {
         }
         if (log) {
             System.out.println(HORIZONTAL_RULER);
-            System.out.println("Summe Teil 2: " + actualPlayers.playerSheet.get(playerNumber).sumPart2);
+            System.out.println("Summe Teil 2: " + actualPlayers.player.get(playerNumber).sumPart2);
             System.out.println(DOUBLE_RULER);
-            System.out.println("Gesamtsumme : " + actualPlayers.playerSheet.get(playerNumber).sum);
+            System.out.println("Gesamtsumme : " + actualPlayers.player.get(playerNumber).sum);
             System.out.println("");
         }
-        table[listPart1.length + 3 + listPart2.length + 1] = actualPlayers.playerSheet.get(playerNumber).sumPart2;
-        table[listPart1.length + 3 + listPart2.length + 1] = actualPlayers.playerSheet.get(playerNumber).sum;
+        table[listPart1.length + 3 + listPart2.length + 1] = actualPlayers.player.get(playerNumber).sumPart2;
+        table[listPart1.length + 3 + listPart2.length + 1] = actualPlayers.player.get(playerNumber).sum;
 
         return table;
     }
@@ -183,32 +183,32 @@ class Kniffel {
         String[] listPart1 = new KniffelSheet().part1;
         String[] listPart2 = new KniffelSheet().part2;
         
-        Integer part1 = actualPlayers.playerSheet.get(playerNumber).partSumPart1;
-        Integer part2 = actualPlayers.playerSheet.get(playerNumber).sumPart2;
+        Integer part1 = actualPlayers.player.get(playerNumber).partSumPart1;
+        Integer part2 = actualPlayers.player.get(playerNumber).sumPart2;
         
-        for (int i = 0; i < actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.size(); i++) {
-            String key = actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(i).gameset.key;
+        for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
+            String key = actualPlayers.player.get(playerNumber).sheet.game.get(i).set.key;
             if (Arrays.asList(listPart1).contains(key)) {
-                part1 += actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(i).gameset.value;
+                part1 += actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;
             }
             else {
                 // Not found
             }
             if (Arrays.asList(listPart2).contains(key)) {
-                part2 += actualPlayers.playerSheet.get(playerNumber).personalSheet.gameSheet.get(i).gameset.value;
+                part2 += actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;
             }
             else {
                 // Not found
             }
         }
-        actualPlayers.playerSheet.get(playerNumber).partSumPart1 = part1;
-        actualPlayers.playerSheet.get(playerNumber).sumPart2 = part2;
+        actualPlayers.player.get(playerNumber).partSumPart1 = part1;
+        actualPlayers.player.get(playerNumber).sumPart2 = part2;
 
         // Calculate bonus
-        if (part1 > 62 ) actualPlayers.playerSheet.get(playerNumber).bonusPart1 = 35;
+        if (part1 > 62 ) actualPlayers.player.get(playerNumber).bonusPart1 = 35;
 
-        actualPlayers.playerSheet.get(playerNumber).sumPart1 = part1 + actualPlayers.playerSheet.get(playerNumber).bonusPart1;
-        actualPlayers.playerSheet.get(playerNumber).sum = part1 + actualPlayers.playerSheet.get(playerNumber).bonusPart1 + part2;
+        actualPlayers.player.get(playerNumber).sumPart1 = part1 + actualPlayers.player.get(playerNumber).bonusPart1;
+        actualPlayers.player.get(playerNumber).sum = part1 + actualPlayers.player.get(playerNumber).bonusPart1 + part2;
     }
 
     public static void main(String args[]) {
@@ -228,13 +228,13 @@ class Kniffel {
         addGoal(knifflers, 2, "Chance", 44);
         addGoal(knifflers, 2, "Volles Haus", 44);
 
-        for (int x = 0; x < knifflers.playerSheet.size(); x++) {
+        for (int x = 0; x < knifflers.player.size(); x++) {
             sumParts(knifflers, x);
             table = scoreTable(knifflers, x, true);             
         }
         
-        knifflers.playerSheet.get(0).deck.dice[1].roll();
-        System.out.println(knifflers.playerSheet.get(0).deck.dice[1].getCount());    
+        knifflers.player.get(0).deck.dice[1].roll();
+        System.out.println(knifflers.player.get(0).deck.dice[1].getCount());    
        
     }
 
