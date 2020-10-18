@@ -1,6 +1,24 @@
 import java.util.*;
 import java.util.Arrays;
 
+class Language {
+    static String ONES = "Einer";
+    static String TWOS = "Zweier";
+    static String THREES = "Dreier";
+    static String FOURS = "Vierer";
+    static String FIFES = "Fünfer";
+    static String SIXES = "Sechser";
+    static String ONE_PAIR = "1 Paar";
+    static String TWO_PAIR = "2 Paar";
+    static String THREE_EQUALS = "Drei Gleiche";
+    static String FOUR_EQUALS = "Vier Gleiche";
+    static String FULL_HOUSE = "Volles Haus";
+    static String SMALL_STREET = "Kleine Straße";
+    static String BIG_STREET = "Große Straße";
+    static String KNIFFEL = "Kniffel";
+    static String CHANCE = "Chance";
+}    
+
 class Tuple<TypeKey, TypeValue> {
     public final TypeKey key;
     public final TypeValue value;
@@ -11,8 +29,8 @@ class Tuple<TypeKey, TypeValue> {
 }
 
 class KniffelSheet {
-    String[] part1 = {"Einer", "Zweier", "Dreier", "Vierer", "Fünfer", "Sechser"};
-    String[] part2 = {"1 Paar", "2 Paar", "Drei Gleiche", "Vier Gleiche", "Volles Haus", "Kleine Straße", "Große Straße", "5x gleiche Augenzahl", "Chance"};    
+    String[] part1 = {Language.ONES, Language.TWOS, Language.THREES, Language.FOURS, Language.FIFES, Language.SIXES};
+    String[] part2 = {Language.ONE_PAIR, Language.TWO_PAIR, Language.THREE_EQUALS, Language.FOUR_EQUALS, Language.FULL_HOUSE, Language.SMALL_STREET, Language.BIG_STREET, Language.KNIFFEL, Language.CHANCE};    
 }
 
 class Goal {
@@ -91,48 +109,16 @@ class Kniffel {
         actualPlayers.player.add(currentSize, player);        
         return actualPlayers.player.size();
     }
-    
-    private static boolean addGoal(Players actualPlayers, Integer playerNumber, String goalName, Integer goalValue) {
-        Boolean keyExists = false;
-        for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
-            if (actualPlayers.player.get(playerNumber).sheet.game.get(0).set.key.equals(goalName)) {
-                keyExists = true;
-            }
-        }        
         
-        if (keyExists) {
-            System.out.println("Wurf existiert");
-            return false;
-        }
-        else {
-            Goal newGoal = new Goal();
-            newGoal.set = new Tuple<>(goalName, goalValue);        
-            Sheet oldSheet = actualPlayers.player.get(playerNumber).sheet;
-            oldSheet.game.add(newGoal);
-            actualPlayers.player.get(playerNumber).sheet = oldSheet;
-            return true;
-        }
-    }
-
-    private static int getValidDiceSumPart1(Players actualPlayers, Integer playerNumber, int goalCounter) {
+    private static int getValidDiceSum(Players actualPlayers, Integer playerNumber, String goalName) {
         Integer goalValue = 0;
-        for (int d = 0; d < 5; d++) {
-            if (actualPlayers.player.get(playerNumber).deck.dice[d].getCount() == goalCounter) {
-                goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
-            }
-        }
-        return goalValue;
-    }
-
-    private static int getValidDiceSumPart2(Players actualPlayers, Integer playerNumber, String goalName) {
-        Integer goalValue = 0;
-        if (goalName.equals("Chance")) {
+        if (goalName.equals(Language.CHANCE)) {
             for (int d = 0; d < 5; d++) {
                 goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
             }
         }
         
-        if (goalName.equals("5x gleiche Augenzahl")) {
+        if (goalName.equals(Language.KNIFFEL)) {
             Boolean valid = true;
             // Finde 5 gleiche Würfel und addiere die Augenzahlen
             if (valid.equals(true)) {
@@ -142,7 +128,7 @@ class Kniffel {
             }
         }
         
-        if (goalName.equals("1 Paar")) {
+        if (goalName.equals(Language.ONE_PAIR)) {
             Boolean valid = true;
             // Finde 2 gleiche Würfel und addiere die Augenzahlen des höchsten Paars
             if (valid.equals(true)) {
@@ -152,7 +138,7 @@ class Kniffel {
             }
         }
 
-        if (goalName.equals("2 Paar")) {
+        if (goalName.equals(Language.TWO_PAIR)) {
             Boolean valid = true;
             // Finde 2 x 2 gleiche Würfel und addiere die Augenzahlen der beiden höchsten Paare
             if (valid.equals(true)) {
@@ -162,7 +148,7 @@ class Kniffel {
             }
         }
 
-        if (goalName.equals("Drei Gleiche")) {
+        if (goalName.equals(Language.THREE_EQUALS)) {
             Boolean valid = true;
             // Finde 3 gleiche Würfel und addiere die Augenzahlen
             if (valid.equals(true)) {
@@ -172,7 +158,7 @@ class Kniffel {
             }
         }
 
-        if (goalName.equals("Vier Gleiche")) {
+        if (goalName.equals(Language.FOUR_EQUALS)) {
             Boolean valid = true;
             // Finde 4 gleiche Würfel und addiere die Augenzahlen
             if (valid.equals(true)) {
@@ -182,7 +168,7 @@ class Kniffel {
             }
         }
 
-        if (goalName.equals("Volles Haus")) {            
+        if (goalName.equals(Language.FULL_HOUSE)) {            
             Boolean valid = true;
             // Finde ein Paar und einen Drilling, wenn ja, addiere alle Augenzahlen
             if (valid.equals(true)) {
@@ -194,7 +180,7 @@ class Kniffel {
             }
         }
 
-        if (goalName.equals("Kleine Straße")) {
+        if (goalName.equals(Language.SMALL_STREET)) {
             Boolean valid = true;
             // Finde 4 aufeinander folgende Würfel und addiere deren Augenzahlen
             if (valid.equals(true)) {
@@ -204,7 +190,7 @@ class Kniffel {
             }
         }
 
-        if (goalName.equals("Große Straße")) {
+        if (goalName.equals(Language.BIG_STREET)) {
             Boolean valid = true;
             // Finde 5 aufeinander folgende Würfel, wenn ja, addiere alle Augenzahlen
             if (valid.equals(true)) {
@@ -216,33 +202,30 @@ class Kniffel {
             }
         }
 
+        Integer goalCounter = 0;
+        if (goalName.equals(Language.ONES)) goalCounter = 1;
+        if (goalName.equals(Language.TWOS)) goalCounter = 2;
+        if (goalName.equals(Language.THREES)) goalCounter = 3;
+        if (goalName.equals(Language.FOURS)) goalCounter = 4;
+        if (goalName.equals(Language.FIFES)) goalCounter = 5;
+        if (goalName.equals(Language.SIXES)) goalCounter = 6;
+        
+        if (goalCounter > 0) {         
+            for (int d = 0; d < 5; d++) {
+                if (actualPlayers.player.get(playerNumber).deck.dice[d].getCount() == goalCounter) {
+                    goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
+                }
+            }      
+        }
+
         return goalValue;
     }
 
     private static boolean addGoal(Players actualPlayers, Integer playerNumber, String goalName) {
         Boolean keyExists = false;
         Integer goalValue = 0;
-
-        switch (goalName) {
-            case "Einer" : { goalValue = getValidDiceSumPart1(actualPlayers, playerNumber, 1); break; }
-            case "Zweier" : { goalValue = getValidDiceSumPart1(actualPlayers, playerNumber, 2); break; }
-            case "Dreier" : { goalValue = getValidDiceSumPart1(actualPlayers, playerNumber, 3); break; }
-            case "Vierer" : { goalValue = getValidDiceSumPart1(actualPlayers, playerNumber, 4); break; }
-            case "Fünfer" : { goalValue = getValidDiceSumPart1(actualPlayers, playerNumber, 5); break; }
-            case "Sechser" : { goalValue = getValidDiceSumPart1(actualPlayers, playerNumber, 6); break; }
-
-            case "1 Paar" : { goalValue = getValidDiceSumPart2(actualPlayers, playerNumber, "1 Paar"); break; }
-            case "2 Paar" : { goalValue = getValidDiceSumPart2(actualPlayers, playerNumber, "2 Paar"); break; }
-            case "Drei Gleiche" : { goalValue = getValidDiceSumPart2(actualPlayers, playerNumber, "Drei Gleiche"); break; }
-            case "Vier Gleiche" : { goalValue = getValidDiceSumPart2(actualPlayers, playerNumber, "Vier Gleiche"); break; }
-            case "Volles Haus" : { goalValue = getValidDiceSumPart2(actualPlayers, playerNumber, "Volles Haus"); break; }
-            case "Kleine Straße" : { goalValue = getValidDiceSumPart2(actualPlayers, playerNumber, "Kleine Straße"); break; }
-            case "Große Straße" : { goalValue = getValidDiceSumPart2(actualPlayers, playerNumber, "Große Straße"); break; }
-            case "5x gleiche Augenzahl" : { goalValue = getValidDiceSumPart2(actualPlayers, playerNumber, "5x gleiche Augenzahl"); break; }
-            case "Chance" : { goalValue = getValidDiceSumPart2(actualPlayers, playerNumber, "Chance"); break; }
-            
-            default: goalValue = 0;
-        }
+        
+        goalValue = getValidDiceSum(actualPlayers, playerNumber, goalName);        
 
         for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
             if (actualPlayers.player.get(playerNumber).sheet.game.get(0).set.key.equals(goalName)) {
@@ -368,17 +351,8 @@ class Kniffel {
         int[] table = new int[25];
         
         addPlayer(knifflers, "Jarvis");
-        addPlayer(knifflers, "Darwin");
-        addPlayer(knifflers, "Thorsten");
-
-        addGoal(knifflers, 0, "Einer", 11);
-        addGoal(knifflers, 0, "Zweier", 22);
-        
-        addGoal(knifflers, 1, "Dreier", 44);
-        addGoal(knifflers, 1, "Fünfer", 44);
-
-        addGoal(knifflers, 2, "Chance", 44);
-        addGoal(knifflers, 2, "Volles Haus", 44);
+        // addPlayer(knifflers, "Darwin");
+        // addPlayer(knifflers, "Thorsten");
     
         for (int d = 0; d < 5; d++) {
             knifflers.player.get(0).deck.dice[d].roll();
@@ -387,7 +361,7 @@ class Kniffel {
 
         System.out.println("");
 
-        addGoal(knifflers, 0, "Chance");
+        addGoal(knifflers, 0, Language.CHANCE);
         
         for (int x = 0; x < knifflers.player.size(); x++) {
             sumParts(knifflers, x);
