@@ -31,12 +31,53 @@ class Player {
     Integer sumPart2 = 0;
     Integer bonusPart1 = 0;
     Integer sum = 0;
+    DiceDeck deck = new DiceDeck();
 }
 
 class Players {
     ArrayList<Player> playerSheet = new ArrayList<>();
 }
 
+class Dice {
+    Integer count;
+    boolean roll;
+
+    public Dice() {
+        this.count = 0;
+        this.roll = true;
+    }
+
+    public void roll() {
+        if (this.roll) {
+            this.count = (int)(Math.random() * 6) + 1;        
+        }
+        else {
+            // Roll not permitted
+        }
+    }
+
+    public int getCount() {
+        return this.count;
+    }
+
+    public boolean getRollState() {
+        return this.roll;
+    }
+
+    public void setRollState(boolean state) {
+        this.roll = state;
+    }
+}
+
+class DiceDeck {
+    Dice[] dice = new Dice[5];
+
+    public DiceDeck() {
+        for (int d = 0; d<5; d++) {
+            dice[d] = new Dice();
+        }
+    }
+}
 
 class Kniffel {
 
@@ -191,6 +232,10 @@ class Kniffel {
             sumParts(knifflers, x);
             table = scoreTable(knifflers, x, true);             
         }
+        
+        knifflers.playerSheet.get(0).deck.dice[1].roll();
+        System.out.println(knifflers.playerSheet.get(0).deck.dice[1].getCount());    
+       
     }
 
 
