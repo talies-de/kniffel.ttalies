@@ -1,93 +1,16 @@
 import java.util.*;
 import java.util.Arrays;
 
-class Tuple<K, V> {
-    public final K key;
-    public final V value;
-    public Tuple(K key, V value) {
-        this.key = key;
-        this.value = value;
-    }
-}
-
-class Language {
-    static String ones = "Einer";
-    static String twos = "Zweier";
-    static String threes = "Dreier";
-    static String fours = "Vierer";
-    static String fives = "Fünfer";
-    static String sixes = "Sechser";
-
-    static String threeEquals = "Drei Gleiche";
-    static String fourEquals = "Vier Gleiche";
-    static String fullHouse = "Volles Haus";
-    static String smallStreet = "Kleine Straße";
-    static String bigStreet = "Große Straße";
-    static String kniffel = "Kniffel";
-    static String chance = "Chance";
-
-    static String horizontalRuler = "-----------------------";
-    static String dashedRuler     = "- - - - - - - - - - - -";
-    static String doubleRuler     = "=======================";
-
-    static String partialSumPart1 = "Teilsumme Teil 1: ";
-    static String sumPart1 = "Summe Teil 1: ";
-    static String sumPart2 = "Summe Teil 2: ";
-    static String bonus = "Bonus Teil 1: ";
-    static String totalSum = "Gesamtsumme : ";
-
-    static String dice = "Würfel";
-
-    Language(){
-        // only language definition
-    }
-}    
-
 class KniffelSheet {
     String[] part1 = {Language.ones, Language.twos, Language.threes, Language.fours, Language.fives, Language.sixes};
     String[] part2 = {Language.threeEquals, Language.fourEquals, Language.fullHouse, Language.smallStreet, Language.bigStreet, Language.kniffel, Language.chance};    
-}
-
-class Dice {
-    Integer count;
-    boolean roll;
-    Random r = new Random();
-
-    public Dice() {
-        this.count = 0;
-        this.roll = true;
-    }
-
-    public void roll() {
-        if (this.roll) {            
-            this.count = r.nextInt(6) + 1;            
-        }
-        else {
-            // Roll not permitted
-        }
-    }
-
-    public int getCount() {
-        return this.count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-    public boolean getRollState() {
-        return this.roll;
-    }
-
-    public void setRollState(boolean state) {
-        this.roll = state;
-    }
 }
 
 class DiceDeck {
     Dice[] dice = new Dice[5];
 
     public DiceDeck() {
-        for (int d = 0; d<5; d++) {
+        for (int d = 0; d < 5; d++) {
             dice[d] = new Dice();
         }
     }
@@ -118,8 +41,9 @@ class Players {
     ArrayList<Player> player = new ArrayList<>();
 }
 
-class Kniffel {
-    private static int addPlayer(Players actualPlayers, String name) {
+class Kniffel {    
+
+    public static int addPlayer(Players actualPlayers, String name) {
         Integer currentSize = actualPlayers.player.size();
         Player player = new Player();
         player.name = name;
@@ -292,7 +216,7 @@ class Kniffel {
         return goalValue;
     }
 
-    private static boolean addGoal(Players actualPlayers, Integer playerNumber, String goalName) {
+    public static boolean addGoal(Players actualPlayers, Integer playerNumber, String goalName) {
         Boolean keyExists = false;
         Integer goalValue = 0;
         
@@ -313,7 +237,7 @@ class Kniffel {
         }
     }
 
-    private static int[] scoreTable(Players actualPlayers, Integer playerNumber, boolean log) {
+    public static int[] scoreTable(Players actualPlayers, Integer playerNumber, boolean log) {
         String[] listPart1 = new KniffelSheet().part1;
         String[] listPart2 = new KniffelSheet().part2;
 
@@ -375,7 +299,7 @@ class Kniffel {
         return table;
     }
 
-    private static void sumParts(Players actualPlayers, Integer playerNumber) {        
+    public static void sumParts(Players actualPlayers, Integer playerNumber) {        
         String[] listPart1 = new KniffelSheet().part1;
         String[] listPart2 = new KniffelSheet().part2;
         
@@ -405,76 +329,15 @@ class Kniffel {
         actualPlayers.player.get(playerNumber).sum = part1 + actualPlayers.player.get(playerNumber).bonusPart1 + part2;
     }
 
+   
+
     public static void main(String[] args) {
         Players knifflers = new Players();
-        int[] table = new int[25];
         
-        addPlayer(knifflers, "Jarvis");
-    
-        System.out.println("Würfle zufällig:");
-        System.out.println(Language.horizontalRuler);
-        for (int d = 0; d < 5; d++) {
-            knifflers.player.get(0).deck.dice[d].roll();
-            System.out.println(Language.dice + d + " : " + knifflers.player.get(0).deck.dice[d].getCount());   
-        }
-
-        knifflers.player.get(0).deck.dice[2].setRollState(false);
-        System.out.println("Würfle zufällig, aber Würfel 3 ist blockiert:");
-        System.out.println(Language.horizontalRuler);
-        for (int d = 0; d < 5; d++) {
-            knifflers.player.get(0).deck.dice[d].roll();
-            System.out.println(Language.dice + d + " : " + knifflers.player.get(0).deck.dice[d].getCount());   
-        }
-
-        knifflers.player.get(0).deck.dice[4].setRollState(false);
-        System.out.println("Würfle erneut zufällig, aber Würfel 3 und 5 sind blockiert:");
-        System.out.println(Language.horizontalRuler);
-        for (int d = 0; d < 5; d++) {
-            knifflers.player.get(0).deck.dice[d].roll();
-            System.out.println(Language.dice + d + " : " + knifflers.player.get(0).deck.dice[d].getCount());   
-        }
-
-        System.out.println("");
-        System.out.println("Nun bauen wir uns die Würfel, wie wir sie brauchen:");
-        System.out.println(Language.horizontalRuler);
-        System.out.println("");
-
-        knifflers.player.get(0).deck.dice[0].setCount(3);
-        knifflers.player.get(0).deck.dice[1].setCount(3);
-        knifflers.player.get(0).deck.dice[2].setCount(3);
-        knifflers.player.get(0).deck.dice[3].setCount(3);
-        knifflers.player.get(0).deck.dice[4].setCount(3);
-
-        for (int d = 0; d < 5; d++) {            
-            System.out.println(Language.dice + d + " : " + knifflers.player.get(0).deck.dice[d].getCount());   
-        }
-
-        System.out.println("");
-        System.out.println("Dieser Wurf könnte eines dieser Ergbnisse sein:");
-        System.out.println(Language.doubleRuler);
-        System.out.println("");
-
-        addGoal(knifflers, 0, Language.ones);
-        addGoal(knifflers, 0, Language.twos);
-        addGoal(knifflers, 0, Language.threes);
-        addGoal(knifflers, 0, Language.fours);
-        addGoal(knifflers, 0, Language.fives);
-        addGoal(knifflers, 0, Language.sixes);
-        addGoal(knifflers, 0, Language.threeEquals);
-        addGoal(knifflers, 0, Language.fourEquals);
-        addGoal(knifflers, 0, Language.fullHouse);
-        addGoal(knifflers, 0, Language.smallStreet);
-        addGoal(knifflers, 0, Language.bigStreet);
-        addGoal(knifflers, 0, Language.kniffel);
-        addGoal(knifflers, 0, Language.chance);        
-
-        for (int x = 0; x < knifflers.player.size(); x++) {
-            sumParts(knifflers, x);
-            table = scoreTable(knifflers, x, true);             
-        }       
-
-        System.out.println("Ergebnisliste zur Weiterverarbeitung:");
-        System.out.println(Language.dashedRuler);
-        System.out.println(Arrays.toString(table));
+        //Creating the Frame
+        Gui.createMainFrame(knifflers);
+        
+        // PlayerFrames.add(knifflers);   
+        
     }
 }
