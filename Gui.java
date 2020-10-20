@@ -16,33 +16,33 @@ class PlayerFrames {
         split.setDividerSize(0);
         split.setResizeWeight(0.5);  
         for (int d = 0; d < 5; d++) {            
-            deck.add(new JLabel("Würfel " + (d + 1)));
-            deck.add(new JLabel("Wurf: " + knifflers.player.get(index).deck.dice[d].getCount()));
-            deck.add(new JCheckBox("Neu würfeln"));            
+            deck.add(new JLabel(Language.dice + " " + (d + 1)));
+            deck.add(new JLabel(Language.diceThrow + " : " + knifflers.player.get(index).deck.dice[d].getCount()));
+            deck.add(new JCheckBox(Language.rollAgain));            
             deck.add(new JLabel(""));            
         }     
-        JButton button = new JButton("Jetzt würfeln");        
+        JButton button = new JButton(Language.rollNow);        
         button.setMaximumSize(new Dimension(50, 50));
         deck.add(button);
         deck.setVisible(true);
         
         for (int s = 0; s < 6 ; s++) {            //knifflers.player.get(index).sheet.game.size()
-            score.add(new JButton("+"));
+            score.add(new JButton(Language.addButton));
             score.add(new JLabel(knifflers.player.get(index).sheet.game.get(s).set.key + " : " + knifflers.player.get(index).sheet.game.get(s).set.value));                                                                    
         }
-        score.add(new JLabel(Language.partialSumPart1 + knifflers.player.get(index).partSumPart1));
+        score.add(new JLabel(Language.partialSumPart1 + " : "  + knifflers.player.get(index).partSumPart1));
         score.add(new JLabel(""));
-        score.add(new JLabel(Language.bonus + knifflers.player.get(index).bonusPart1));
+        score.add(new JLabel(Language.bonus + " : "  + knifflers.player.get(index).bonusPart1));
         score.add(new JLabel(""));
-        score.add(new JLabel(Language.sumPart1 + knifflers.player.get(index).sumPart1));
+        score.add(new JLabel(Language.sumPart1 + " : "  + knifflers.player.get(index).sumPart1));
         score.add(new JLabel(""));
         for (int s = 6; s < knifflers.player.get(index).sheet.game.size() ; s++) {           
-            score.add(new JButton("+"));
+            score.add(new JButton(Language.addButton));
             score.add(new JLabel(knifflers.player.get(index).sheet.game.get(s).set.key + " : " + knifflers.player.get(index).sheet.game.get(s).set.value));                                                                    
         }
-        score.add(new JLabel(Language.sumPart2 + knifflers.player.get(index).sumPart2));
+        score.add(new JLabel(Language.sumPart2 + " : " + knifflers.player.get(index).sumPart2));
         score.add(new JLabel(""));
-        score.add(new JLabel(Language.totalSum + knifflers.player.get(index).sum));
+        score.add(new JLabel(Language.totalSum + " : "  + knifflers.player.get(index).sum));
         
         score.setVisible(true);
 
@@ -95,39 +95,64 @@ class MenuBar extends JMenuBar implements ActionListener {
     private static final long serialVersionUID = 1L;
     
     JMenuBar mb = new JMenuBar();
-    JMenu m1 = new JMenu("Spiel");
-    JMenu m2 = new JMenu("Hilfe");
-    JMenuItem m10 = new JMenuItem("Starten");
-    JMenu m11 = new JMenu("Spieler");
-    JMenuItem m111 = new JMenuItem("Hinzufügen");
-    JMenuItem m112 = new JMenuItem("Entfernen");
-    JMenuItem m12 = new JMenuItem("Beenden");
-    JMenuItem m21 = new JMenuItem("Anleitung");
-    JMenuItem m22 = new JMenuItem("Über");
+    JMenu m1 = new JMenu(Language.game);
+    JMenu m2 = new JMenu(Language.help);
+    JMenuItem m10 = new JMenuItem(Language.start);
+    JMenu m11 = new JMenu(Language.player);
+    JMenuItem m111 = new JMenuItem(Language.add);
+    JMenuItem m112 = new JMenuItem(Language.remove);
+    JMenuItem m12 = new JMenuItem(Language.quit);
+    JMenuItem m21 = new JMenuItem(Language.manual);
+    JMenuItem m22 = new JMenuItem(Language.about);    
 
     public void actionPerformed (ActionEvent ae){
         if(ae.getSource() == this.m111){                          
-            String result = JOptionPane.showInputDialog(null, "Name:");   
+            String result = JOptionPane.showInputDialog(null, Language.name);   
             Kniffel.addPlayer(knifflers, result);            
-            JOptionPane.showMessageDialog(null, "Spieler/in " + result + " hinzugefügt", "Neue/r Spieler/in", JOptionPane.INFORMATION_MESSAGE);  
-            System.out.println("Added " + result);                
+            JOptionPane.showMessageDialog(null, Language.player + " " + result + " " + Language.added, Language.addnew + " " + Language.player, JOptionPane.INFORMATION_MESSAGE);                           
         }
         if(ae.getSource() == this.m112){
-            System.out.println("Remove");
+            if (knifflers.player.isEmpty()) {
+                JOptionPane.showMessageDialog(null, Language.noPlayersMessage, Language.removePlayerTitle, JOptionPane.INFORMATION_MESSAGE); 
+            } 
+            if (knifflers.player.size() == 1) {
+                JOptionPane.showMessageDialog(null, Language.singlePlayerMessage, Language.removePlayerTitle, JOptionPane.INFORMATION_MESSAGE); 
+            }
+            if (!(knifflers.player.isEmpty()) && (knifflers.player.size() != 1)) {
+                String[] choices = new String[knifflers.player.size()];            
+                for (int p = 0; p < knifflers.player.size(); p++) {
+                    choices[p] = "[" + (p+1) + "] " + knifflers.player.get(p).name;
+                }            
+                String input = (String) JOptionPane.showInputDialog(null, Language.removePlayerMessage, Language.removePlayerTitle, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]); 
+
+                if (input == null) {
+                    //
+                } else {
+                    int start = input.indexOf("[") + 1;
+                    int end = input.indexOf("]");
+                    int removePlayerNumber = (int)Integer.valueOf(input.substring(start, end)) - 1;
+                    Kniffel.removePlayer(knifflers, removePlayerNumber);
+                }
+            }
         }
         if(ae.getSource() == this.m12){        
-            System.out.println("Quit");
-            System.exit(0);
+            int reply = JOptionPane.showConfirmDialog(null, Language.quitMessage, Language.quitTitle, JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            } else {
+                //
+            }
         }
         if(ae.getSource() == this.m21){
-            System.out.println("Manual");
+            JOptionPane.showMessageDialog(null, Language.manualMessage, Language.manualTitle, JOptionPane.INFORMATION_MESSAGE);
         }
         if(ae.getSource() == this.m22){
-            System.out.println("About");
+            JOptionPane.showMessageDialog(null, Language.aboutMessage, Language.aboutTitle, JOptionPane.INFORMATION_MESSAGE);
         }
         if(ae.getSource() == this.m10){
-            PlayerFrames.add(knifflers);   
-            System.out.println("Start");
+            if (knifflers.player.isEmpty()) {
+                JOptionPane.showMessageDialog(null, Language.noPlayersMessage, Language.appName, JOptionPane.INFORMATION_MESSAGE); 
+            } else PlayerFrames.add(knifflers);               
         }
     }   
 
@@ -144,6 +169,8 @@ class MenuBar extends JMenuBar implements ActionListener {
         add(m2, mbGbc);
         
         m1.add(m10);
+        m1.addSeparator();
+
         m10.addActionListener(this);
         m1.add(m11);
         
@@ -153,6 +180,8 @@ class MenuBar extends JMenuBar implements ActionListener {
         m112.addActionListener(this);
         m11.add(m112);
         
+        m1.addSeparator();
+
         m12.addActionListener(this);
         m1.add(m12);
         
@@ -171,11 +200,15 @@ public class Gui {
     public static void createMainFrame(Players knifflers) {
         frame.setDefaultCloseOperation(3); // JFrame.EXIT_ON_CLOSE
         frame.setSize(700,600);   
-        frame.setTitle("Kniffel");
-        frame.setName("Kniffel"); 
+        frame.setTitle(Language.appName);
+        frame.setName(Language.appName); 
 
         frame.add(BorderLayout.NORTH, new MenuBar(knifflers));
 
+        JLabel text = new JLabel(Language.welcome);
+        text.setHorizontalAlignment(SwingConstants.CENTER);
+        text.setFont(new Font("Verdana", Font.PLAIN, 18));
+        frame.add(BorderLayout.CENTER, text);
         frame.setLocationRelativeTo(null);  
         frame.setVisible(true);
     }

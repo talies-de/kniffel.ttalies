@@ -51,6 +51,10 @@ class Kniffel {
         actualPlayers.player.add(currentSize, player);        
         return actualPlayers.player.size();
     }
+
+    public static void removePlayer(Players actualPlayers, int index) {
+        actualPlayers.player.remove(index);
+    }
         
     private static Integer[] dicesToArray(Players actualPlayers, Integer playerNumber) {
         Integer[] dices = new Integer[actualPlayers.player.get(playerNumber).deck.dice.length];
@@ -329,15 +333,10 @@ class Kniffel {
         actualPlayers.player.get(playerNumber).sum = part1 + actualPlayers.player.get(playerNumber).bonusPart1 + part2;
     }
 
-   
-
     public static void main(String[] args) {
         Players knifflers = new Players();
         
         //Creating the Frame
-        Gui.createMainFrame(knifflers);
-        
-        // PlayerFrames.add(knifflers);   
-        
+        Gui.createMainFrame(knifflers);                        
     }
 }
