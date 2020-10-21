@@ -170,7 +170,7 @@ class MenuBar extends JMenuBar implements ActionListener {
                     Kniffel.initGoals(knifflers, playerNumber);
                 }
                 m10.setEnabled(false);
-                
+                m101.setEnabled(true);
                 PlayerFrames.add(knifflers);               
             }
         }
@@ -201,6 +201,7 @@ class MenuBar extends JMenuBar implements ActionListener {
         m10.addActionListener(this);
         
         m1.add(m101);
+        m101.setEnabled(false);
         m101.addActionListener(this);
         
         m1.addSeparator();
