@@ -108,7 +108,7 @@ class MenuBar extends JMenuBar implements ActionListener {
     JMenu m1 = new JMenu(Language.game);
     JMenu m2 = new JMenu(Language.help);
     JMenuItem m10 = new JMenuItem(Language.start);
-    JMenuItem m101 = new JMenuItem(Langage.show);
+    JMenuItem m101 = new JMenuItem(Language.show);
     JMenu m11 = new JMenu(Language.player);
     JMenuItem m111 = new JMenuItem(Language.add);
     JMenuItem m112 = new JMenuItem(Language.remove);
