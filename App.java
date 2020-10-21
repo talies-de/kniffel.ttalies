@@ -241,6 +241,42 @@ class Kniffel {
         }
     }
 
+    public static void initGoals(Players actualPlayers, Integer playerNumber) {
+        Boolean keyExists = false;
+        Integer goalValue = -1;
+        
+        String[] listPart1 = new KniffelSheet().part1;
+        String[] listPart2 = new KniffelSheet().part2;
+
+        String[] allGoals = new String[listPart1.length + listPart2.length];
+        
+        int index = 0;
+        for (String elem : listPart1) {
+            allGoals[index] = elem;
+            index++;
+        }
+
+        for (String elem : listPart2) {
+            allGoals[index] = elem;
+            index++;
+        }
+
+        for (String goalName : allGoals) {
+
+            for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
+                if (actualPlayers.player.get(playerNumber).sheet.game.get(0).set.key.equals(goalName)) keyExists = true;
+            }        
+            
+            if (Boolean.FALSE.equals(keyExists)) {
+                Goal newGoal = new Goal();
+                newGoal.set = new Tuple<>(goalName, goalValue);        
+                Sheet oldSheet = actualPlayers.player.get(playerNumber).sheet;
+                oldSheet.game.add(newGoal);
+                actualPlayers.player.get(playerNumber).sheet = oldSheet;                
+            }
+        }
+    }
+
     public static int[] scoreTable(Players actualPlayers, Integer playerNumber, boolean log) {
         String[] listPart1 = new KniffelSheet().part1;
         String[] listPart2 = new KniffelSheet().part2;

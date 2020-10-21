@@ -35,8 +35,9 @@ public class Language {
 
     static String game = "Spiel";
     static String help = "Hilfe";
-    static String start = "Starten";
+    static String start = "Starten";    
     static String player = "Spieler/in";
+    static String show = player + " anzeigen";
     static String add = "Hinzufügen";
     static String remove = "Entfernen";
     static String about = "Über";
@@ -63,6 +64,8 @@ public class Language {
     static String removePlayerTitle = player + " " + remove.toLowerCase();
     static String noPlayersMessage = "Keine " + player + " vorhanden.";
     static String singlePlayerMessage = "Der/die letzte " + player + " kann nicht gelöscht werden.";
+
+    static String playing = "Es spielen derzeit";
 
     Language(){
         // only language definition
