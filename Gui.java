@@ -109,7 +109,11 @@ class PlayerFrames {
                     player.get(index).removeAll();                
                     player.get(index).dispose();
                     knifflers.player.get(index).roll = 0;
-                    repaintPlayer(index, knifflers);  
+                    int nextPlayer = index + 1;
+                    if (nextPlayer > knifflers.player.size()-1) nextPlayer = 0;
+                    knifflers.player.get(index).turn = false;
+                    knifflers.player.get(nextPlayer).turn = true; 
+                    repaintPlayer(nextPlayer, knifflers);
                 }});
             if (knifflers.player.get(index).sheet.game.get(s).set.value == -1) addButton.setEnabled(true);
             else addButton.setEnabled(false);
@@ -150,7 +154,11 @@ class PlayerFrames {
                     player.get(index).removeAll();                
                     player.get(index).dispose();
                     knifflers.player.get(index).roll = 0;
-                    repaintPlayer(index, knifflers);  
+                    int nextPlayer = index + 1;
+                    if (nextPlayer > knifflers.player.size()-1) nextPlayer = 0; 
+                    knifflers.player.get(index).turn = false;
+                    knifflers.player.get(nextPlayer).turn = true;
+                    repaintPlayer(nextPlayer, knifflers);  
                 }});
             if (knifflers.player.get(index).sheet.game.get(s).set.value == -1) addButton.setEnabled(true);
             else addButton.setEnabled(false);
@@ -181,7 +189,8 @@ class PlayerFrames {
         
         player.get(index).add(split);   
         player.get(index).setDefaultCloseOperation(1); //JFrame.HIDE_ON_CLOSE
-        player.get(index).setVisible(true);                    
+        if (knifflers.player.get(index).turn) player.get(index).setVisible(true);                    
+        else player.get(index).setVisible(false);                    
         player.get(index).repaint();
     }        
 
@@ -212,7 +221,7 @@ class PlayerFrames {
             frame.setDefaultCloseOperation(1); // JFrame.HIDE_ON_CLOSE
             frame.setTitle(knifflers.player.get(i).name);
             frame.setName(knifflers.player.get(i).name);        
-            frame.setVisible(true);
+            frame.setVisible(false);
             frame.setLayout(new GridBagLayout());
             player.add(frame);  
 
@@ -224,6 +233,8 @@ class PlayerFrames {
             frame.setResizable(false);  
             frame.pack();
         }
+        // First player may start
+        knifflers.player.get(0).turn = true;
     }
 
     public static boolean remove(int index) {
@@ -308,10 +319,11 @@ class MenuBar extends JMenuBar implements ActionListener {
                 for (int playerNumber = 0; playerNumber < knifflers.player.size(); playerNumber++) {
                     Kniffel.initGoals(knifflers, playerNumber);
                 }
+                knifflers.player.get(0).turn = true;
                 m10.setEnabled(false);
                 m111.setEnabled(false);
                 m112.setEnabled(false);
-                m101.setEnabled(true);
+                m101.setEnabled(true);                            
                 PlayerFrames.add(knifflers);               
             }
         }

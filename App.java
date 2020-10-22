@@ -35,6 +35,7 @@ class Player {
     Integer sum = 0;
 
     Integer roll = 0;
+    Boolean turn = false;
 
     DiceDeck deck = new DiceDeck();
 }
