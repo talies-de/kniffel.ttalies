@@ -34,6 +34,8 @@ class Player {
     Integer bonusPart1 = 0;
     Integer sum = 0;
 
+    Integer roll = 0;
+
     DiceDeck deck = new DiceDeck();
 }
 
@@ -220,6 +222,18 @@ class Kniffel {
         return goalValue;
     }
 
+    public static void updateGoal(Players actualPlayers, Integer playerNumber, String goalName) {
+        Integer goalValue = 0;
+        
+        goalValue = getValidDiceSum(actualPlayers, playerNumber, goalName);    
+
+        for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
+            if (actualPlayers.player.get(playerNumber).sheet.game.get(i).set.key.equals(goalName)) {                
+                actualPlayers.player.get(playerNumber).sheet.game.get(i).set = new Tuple<>(goalName, goalValue);                
+            }
+        }     
+    }
+
     public static boolean addGoal(Players actualPlayers, Integer playerNumber, String goalName) {
         Boolean keyExists = false;
         Integer goalValue = 0;
@@ -349,12 +363,14 @@ class Kniffel {
         for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
             String key = actualPlayers.player.get(playerNumber).sheet.game.get(i).set.key;
             if (Arrays.asList(listPart1).contains(key)) {
-                part1 += actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;
+                if (actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value != -1)
+                    part1 += actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;
             } else {
                 // Not found
             }
             if (Arrays.asList(listPart2).contains(key)) {
-                part2 += actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;
+                if (actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value != -1)
+                    part2 += actualPlayers.player.get(playerNumber).sheet.game.get(i).set.value;
             } else {
                 // Not found
             }
