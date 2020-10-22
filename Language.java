@@ -67,6 +67,14 @@ public class Language {
 
     static String playing = "Es spielen derzeit";
 
+    static String font = "Verdana";
+
+    static String endGame = "Spielende";
+    static String winner = "Gewinner/in";
+    static String with = "mit";
+    static String winnerIs = "Gewonnen hat ";
+    static String points = "Punkten";
+
     Language(){
         // only language definition
     }

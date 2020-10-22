@@ -22,7 +22,7 @@ class PlayerFrames {
             c.gridx = 0;
             c.gridy = d + addition;
             JLabel diceLabel = new JLabel(Language.dice + " " + (d + 1));            
-            diceLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
+            diceLabel.setFont(new Font(Language.font, Font.PLAIN, 18));
             deck.add(diceLabel, c);                        
 
             c.gridx = 0;
@@ -56,6 +56,16 @@ class PlayerFrames {
             addition = addition + 3;            
         }   
         return addition;
+    }
+
+    private static boolean checkEndGame(Players knifflers) {
+        Boolean gameEnds = true;
+        for (int p = 0; p < knifflers.player.size(); p++) {
+            for (int g = 0; g < knifflers.player.get(p).sheet.game.size(); g++) {
+                if (knifflers.player.get(p).sheet.game.get(g).set.value == -1) gameEnds = false;
+            }
+        }        
+        return gameEnds;
     }
 
     private static void addBoard(int index, Players knifflers) {
@@ -108,12 +118,17 @@ class PlayerFrames {
                     
                     player.get(index).removeAll();                
                     player.get(index).dispose();
-                    knifflers.player.get(index).roll = 0;
-                    int nextPlayer = index + 1;
-                    if (nextPlayer > knifflers.player.size()-1) nextPlayer = 0;
-                    knifflers.player.get(index).turn = false;
-                    knifflers.player.get(nextPlayer).turn = true; 
-                    repaintPlayer(nextPlayer, knifflers);
+                    if (checkEndGame(knifflers)) {
+                        Gui.endScore(knifflers);
+                        // JOptionPane.showMessageDialog(null, Language.endGame, Language.winner, JOptionPane.INFORMATION_MESSAGE); 
+                    } else {
+                        knifflers.player.get(index).roll = 0;
+                        int nextPlayer = index + 1;
+                        if (nextPlayer > knifflers.player.size()-1) nextPlayer = 0;
+                        knifflers.player.get(index).turn = false;
+                        knifflers.player.get(nextPlayer).turn = true; 
+                        repaintPlayer(nextPlayer, knifflers);
+                    }
                 }});
             if (knifflers.player.get(index).sheet.game.get(s).set.value == -1) addButton.setEnabled(true);
             else addButton.setEnabled(false);
@@ -153,12 +168,17 @@ class PlayerFrames {
                     
                     player.get(index).removeAll();                
                     player.get(index).dispose();
-                    knifflers.player.get(index).roll = 0;
-                    int nextPlayer = index + 1;
-                    if (nextPlayer > knifflers.player.size()-1) nextPlayer = 0; 
-                    knifflers.player.get(index).turn = false;
-                    knifflers.player.get(nextPlayer).turn = true;
-                    repaintPlayer(nextPlayer, knifflers);  
+                    if (checkEndGame(knifflers)) {
+                        Gui.endScore(knifflers);
+                        // JOptionPane.showMessageDialog(null, Language.endGame, Language.winner, JOptionPane.INFORMATION_MESSAGE); 
+                    } else {
+                        knifflers.player.get(index).roll = 0;
+                        int nextPlayer = index + 1;
+                        if (nextPlayer > knifflers.player.size()-1) nextPlayer = 0; 
+                        knifflers.player.get(index).turn = false;
+                        knifflers.player.get(nextPlayer).turn = true;
+                        repaintPlayer(nextPlayer, knifflers);  
+                    }
                 }});
             if (knifflers.player.get(index).sheet.game.get(s).set.value == -1) addButton.setEnabled(true);
             else addButton.setEnabled(false);
@@ -189,6 +209,7 @@ class PlayerFrames {
         
         player.get(index).add(split);   
         player.get(index).setDefaultCloseOperation(1); //JFrame.HIDE_ON_CLOSE
+        
         if (knifflers.player.get(index).turn) player.get(index).setVisible(true);                    
         else player.get(index).setVisible(false);                    
         player.get(index).repaint();
@@ -411,6 +432,35 @@ public class Gui {
         }
     }
 
+    public static void endScore(Players knifflers) {
+        frame.removeAll();
+        JLabel text = new JLabel(Language.endGame);    
+        text.setHorizontalAlignment(SwingConstants.CENTER);
+        text.setFont(new Font(Language.font, Font.PLAIN, 18));
+        frame.add(BorderLayout.CENTER, text);
+
+        int winner = 0;
+        int highestScore = 0;
+        for (int p = 0; p < knifflers.player.size(); p++) {
+            if (knifflers.player.get(p).sum > highestScore) {
+                highestScore = knifflers.player.get(p).sum;
+                winner = p;
+            }
+            JLabel player = new JLabel(knifflers.player.get(p).name + " : " + knifflers.player.get(p).sum);
+
+            player.setVisible(true);
+            frame.add(player);
+        }
+
+        JLabel winnerLabel = new JLabel(Language.winnerIs + knifflers.player.get(winner).name + " " + Language.with + " " + knifflers.player.get(winner).sum + " " + Language.points);
+        winnerLabel.setVisible(true);
+        frame.add(winnerLabel);
+
+        frame.setLocationRelativeTo(null);  
+        frame.setVisible(true);
+        frame.repaint();
+    }
+
     public static void createMainFrame(Players knifflers) {
         frame.setDefaultCloseOperation(3); // JFrame.EXIT_ON_CLOSE
         frame.setSize(700,600);   
@@ -421,7 +471,7 @@ public class Gui {
 
         JLabel text = new JLabel(Language.welcome);
         text.setHorizontalAlignment(SwingConstants.CENTER);
-        text.setFont(new Font("Verdana", Font.PLAIN, 18));
+        text.setFont(new Font(Language.font, Font.PLAIN, 18));
         frame.add(BorderLayout.CENTER, text);
 
         playerList(knifflers);
