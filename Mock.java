@@ -12,7 +12,7 @@ public class Mock {
 
             System.out.println("Würfle zufällig:");
             System.out.println(Language.horizontalRuler);
-            for (int d = 0; d < 5; d++) {
+            for (int d = 0; d < Config.diceAmount; d++) {
                 knifflers.player.get(p).deck.dice[d].roll();
                 System.out.println(Language.dice + d + " : " + knifflers.player.get(p).deck.dice[d].getCount());   
             }
@@ -20,7 +20,7 @@ public class Mock {
             knifflers.player.get(p).deck.dice[2].setRollState(false);
             System.out.println("Würfle zufällig, aber Würfel 3 ist blockiert:");
             System.out.println(Language.horizontalRuler);
-            for (int d = 0; d < 5; d++) {
+            for (int d = 0; d < Config.diceAmount; d++) {
                 knifflers.player.get(p).deck.dice[d].roll();
                 System.out.println(Language.dice + d + " : " + knifflers.player.get(p).deck.dice[d].getCount());   
             }
@@ -28,7 +28,7 @@ public class Mock {
             knifflers.player.get(p).deck.dice[4].setRollState(false);
             System.out.println("Würfle erneut zufällig, aber Würfel 3 und 5 sind blockiert:");
             System.out.println(Language.horizontalRuler);
-            for (int d = 0; d < 5; d++) {
+            for (int d = 0; d < Config.diceAmount; d++) {
                 knifflers.player.get(p).deck.dice[d].roll();
                 System.out.println(Language.dice + d + " : " + knifflers.player.get(p).deck.dice[d].getCount());   
             }
@@ -44,7 +44,7 @@ public class Mock {
             knifflers.player.get(p).deck.dice[3].setCount(2);
             knifflers.player.get(p).deck.dice[4].setCount(1);
 
-            for (int d = 0; d < 5; d++) {            
+            for (int d = 0; d < Config.diceAmount; d++) {            
                 System.out.println(Language.dice + d + " : " + knifflers.player.get(p).deck.dice[d].getCount());   
             }
 
@@ -76,5 +76,9 @@ public class Mock {
             System.out.println(Language.dashedRuler);
             System.out.println(Arrays.toString(table));
         }
+    }
+
+    private Mock() {
+        //
     }
 }

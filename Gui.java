@@ -4,7 +4,7 @@ import java.util.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+
 
 class PlayerFrames {
     static ArrayList<JFrame> player = new ArrayList<>();
@@ -18,11 +18,11 @@ class PlayerFrames {
 
     public static int paintDice(GridBagConstraints c, Players knifflers, int index, JPanel deck){
         int addition = 0;
-        for (int d = 0; d < 5; d++) {   
+        for (int d = 0; d < Config.diceAmount; d++) {   
             c.gridx = 0;
             c.gridy = d + addition;
             JLabel diceLabel = new JLabel(Language.dice + " " + (d + 1));            
-            diceLabel.setFont(new Font(Language.font, Font.PLAIN, 18));
+            diceLabel.setFont(new Font(Config.font, Font.PLAIN, 18));
             deck.add(diceLabel, c);                        
 
             c.gridx = 0;
@@ -38,8 +38,7 @@ class PlayerFrames {
             
             checkRoll.setName(String.valueOf(d));
 
-            checkRoll.addItemListener(new ItemListener() {
-                public void itemStateChanged(ItemEvent e) {     
+            checkRoll.addItemListener(e -> {     
                     int dN = 0;
                     dN = Integer.valueOf(checkRoll.getName());               
                     if (e.getStateChange() == ItemEvent.SELECTED)
@@ -49,7 +48,7 @@ class PlayerFrames {
                             knifflers.player.get(index).deck.dice[dN].setRollState(false);
                     }
                 }
-            });
+            );
              
             deck.add(checkRoll, c);                        
 
@@ -66,6 +65,34 @@ class PlayerFrames {
             }
         }        
         return gameEnds;
+    }
+
+    private static Boolean setAddButtonState(Players knifflers, int index, int s) {
+        return (knifflers.player.get(index).sheet.game.get(s).set.value == -1);
+    }
+
+    private static void addButtonAction(JButton addButton, Players knifflers, int index) {
+        String goalName = addButton.getText();
+                    if (knifflers.player.get(index).roll != 0) {
+                        Kniffel.updateGoal(knifflers, index, goalName);
+                        Kniffel.sumParts(knifflers, index);
+                        
+                        player.get(index).removeAll();                
+                        player.get(index).dispose();
+                        if (checkEndGame(knifflers)) {
+                            Gui.endScore(knifflers);                        
+                        } else {
+                            knifflers.player.get(index).roll = 0;
+                            int nextPlayer = index + 1;
+                            if (nextPlayer > knifflers.player.size()-1) nextPlayer = 0;
+                            knifflers.player.get(index).turn = false;
+                            knifflers.player.get(nextPlayer).turn = true; 
+                            repaintPlayer(nextPlayer, knifflers);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, Language.noDiceThrowMessage, Language.noDiceThrowTitle, JOptionPane.INFORMATION_MESSAGE); 
+                    }
+
     }
 
     private static void addBoard(int index, Players knifflers) {
@@ -88,9 +115,8 @@ class PlayerFrames {
         c.gridx = 0;
         c.gridy = 5 + addition + 2;        
         JButton rollNowButton = new JButton(Language.rollNow + "(" + knifflers.player.get(index).roll + ")");
-        rollNowButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                for (int d = 0; d < 5; d++) {
+        rollNowButton.addActionListener(e -> {
+                for (int d = 0; d < Config.diceAmount; d++) {
                     knifflers.player.get(index).deck.dice[d].roll();                    
                 }     
 
@@ -98,9 +124,9 @@ class PlayerFrames {
                 player.get(index).dispose();
                 knifflers.player.get(index).roll++;
                 repaintPlayer(index, knifflers);   
-            }});
+            });
         if (knifflers.player.get(index).roll == 3) rollNowButton.setEnabled(false);
-        deck.add(rollNowButton,c);
+        deck.add(rollNowButton,c);        
         deck.setVisible(true);
         
         for (int s = 0; s < 6 ; s++) {            //knifflers.player.get(index).sheet.game.size()
@@ -109,29 +135,9 @@ class PlayerFrames {
             JButton addButton = new JButton(knifflers.player.get(index).sheet.game.get(s).set.key);            
             
             c.fill = GridBagConstraints.HORIZONTAL;
-            addButton.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    String goalName = addButton.getText();
 
-                    Kniffel.updateGoal(knifflers, index, goalName);
-                    Kniffel.sumParts(knifflers, index);
-                    
-                    player.get(index).removeAll();                
-                    player.get(index).dispose();
-                    if (checkEndGame(knifflers)) {
-                        Gui.endScore(knifflers);
-                        // JOptionPane.showMessageDialog(null, Language.endGame, Language.winner, JOptionPane.INFORMATION_MESSAGE); 
-                    } else {
-                        knifflers.player.get(index).roll = 0;
-                        int nextPlayer = index + 1;
-                        if (nextPlayer > knifflers.player.size()-1) nextPlayer = 0;
-                        knifflers.player.get(index).turn = false;
-                        knifflers.player.get(nextPlayer).turn = true; 
-                        repaintPlayer(nextPlayer, knifflers);
-                    }
-                }});
-            if (knifflers.player.get(index).sheet.game.get(s).set.value == -1) addButton.setEnabled(true);
-            else addButton.setEnabled(false);
+            addButton.addActionListener(e -> addButtonAction(addButton, knifflers, index));
+            addButton.setEnabled(setAddButtonState(knifflers, index, s));
             score.add(addButton,c);
             c.gridx = 1;
             c.gridy = s;            
@@ -160,28 +166,8 @@ class PlayerFrames {
             c.gridy = s + 3;
             JButton addButton = new JButton(knifflers.player.get(index).sheet.game.get(s).set.key);
             c.fill = GridBagConstraints.HORIZONTAL;
-            addButton.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    String goalName = addButton.getText();
-                    Kniffel.updateGoal(knifflers, index, goalName);
-                    Kniffel.sumParts(knifflers, index);
-                    
-                    player.get(index).removeAll();                
-                    player.get(index).dispose();
-                    if (checkEndGame(knifflers)) {
-                        Gui.endScore(knifflers);
-                        // JOptionPane.showMessageDialog(null, Language.endGame, Language.winner, JOptionPane.INFORMATION_MESSAGE); 
-                    } else {
-                        knifflers.player.get(index).roll = 0;
-                        int nextPlayer = index + 1;
-                        if (nextPlayer > knifflers.player.size()-1) nextPlayer = 0; 
-                        knifflers.player.get(index).turn = false;
-                        knifflers.player.get(nextPlayer).turn = true;
-                        repaintPlayer(nextPlayer, knifflers);  
-                    }
-                }});
-            if (knifflers.player.get(index).sheet.game.get(s).set.value == -1) addButton.setEnabled(true);
-            else addButton.setEnabled(false);
+            addButton.addActionListener(e -> addButtonAction(addButton, knifflers, index));
+            addButton.setEnabled(setAddButtonState(knifflers, index, s));
             score.add(addButton,c);
             c.gridx = 1;
             c.gridy = s + 3;
@@ -209,9 +195,10 @@ class PlayerFrames {
         
         player.get(index).add(split);   
         player.get(index).setDefaultCloseOperation(1); //JFrame.HIDE_ON_CLOSE
-        
-        if (knifflers.player.get(index).turn) player.get(index).setVisible(true);                    
-        else player.get(index).setVisible(false);                    
+        player.get(index).setLocationRelativeTo(null);  
+        player.get(index).getRootPane().setDefaultButton(rollNowButton);
+                
+        player.get(index).setVisible((Boolean.TRUE.equals(knifflers.player.get(index).turn)));                    
         player.get(index).repaint();
     }        
 
@@ -219,6 +206,7 @@ class PlayerFrames {
         JFrame frame = new JFrame();
         
         frame.setDefaultCloseOperation(1); // JFrame.HIDE_ON_CLOSE
+        frame.setLocationRelativeTo(null);  
         frame.setTitle(knifflers.player.get(i).name);
         frame.setName(knifflers.player.get(i).name);        
         frame.setVisible(true);
@@ -242,6 +230,7 @@ class PlayerFrames {
             frame.setDefaultCloseOperation(1); // JFrame.HIDE_ON_CLOSE
             frame.setTitle(knifflers.player.get(i).name);
             frame.setName(knifflers.player.get(i).name);        
+            frame.setLocationRelativeTo(null);  
             frame.setVisible(false);
             frame.setLayout(new GridBagLayout());
             player.add(frame);  
@@ -283,6 +272,7 @@ class MenuBar extends JMenuBar implements ActionListener {
     JMenu m11 = new JMenu(Language.player);
     JMenuItem m111 = new JMenuItem(Language.add);
     JMenuItem m112 = new JMenuItem(Language.remove);
+    JMenuItem m113 = new JMenuItem(Language.addAI);
     JMenuItem m12 = new JMenuItem(Language.quit);
     JMenuItem m21 = new JMenuItem(Language.manual);
     JMenuItem m22 = new JMenuItem(Language.about);    
@@ -290,9 +280,13 @@ class MenuBar extends JMenuBar implements ActionListener {
     public void actionPerformed (ActionEvent ae){
         if(ae.getSource() == this.m111){                          
             String result = JOptionPane.showInputDialog(null, Language.name);   
-            Kniffel.addPlayer(knifflers, result);            
-            JOptionPane.showMessageDialog(null, Language.player + " " + result + " " + Language.added, Language.addnew + " " + Language.player, JOptionPane.INFORMATION_MESSAGE);                           
-            Gui.playerList(knifflers);
+            if (result.isEmpty()) {
+                JOptionPane.showMessageDialog(null, Language.player + " " + result + " " + Language.addempty, Language.addnew + " " + Language.player, JOptionPane.INFORMATION_MESSAGE);                               
+            } else {
+                Kniffel.addPlayer(knifflers, result);            
+                JOptionPane.showMessageDialog(null, Language.player + " " + result + " " + Language.added, Language.addnew + " " + Language.player, JOptionPane.INFORMATION_MESSAGE);                           
+                Gui.playerList(knifflers);
+            }
         }
         if(ae.getSource() == this.m112){
             if (knifflers.player.isEmpty()) {
@@ -357,11 +351,15 @@ class MenuBar extends JMenuBar implements ActionListener {
                 }
             }
         }
+        if(ae.getSource() == this.m113){
+            // TODO: Computer AI
+            JOptionPane.showMessageDialog(null, "Function not implemented", Language.appName, JOptionPane.INFORMATION_MESSAGE); 
+        }
     }   
 
     private static void setPlayer(Players kniffelPlayers) {
         MenuBar.knifflers = kniffelPlayers;
-    }
+    }  
 
     public MenuBar(Players kniffelPlayers) {
         setPlayer(kniffelPlayers);
@@ -387,6 +385,10 @@ class MenuBar extends JMenuBar implements ActionListener {
         m112.addActionListener(this);
         m11.add(m112);
         
+        m113.addActionListener(this);
+        m113.setEnabled(false);
+        m11.add(m113);
+
         m1.addSeparator();
 
         m12.addActionListener(this);
@@ -397,7 +399,7 @@ class MenuBar extends JMenuBar implements ActionListener {
         
         m22.addActionListener(this);
         m2.add(m22);
-    }
+    }    
 }
 
 public class Gui {
@@ -405,78 +407,109 @@ public class Gui {
     private static JFrame frame = new JFrame();
     private static Component activePlayers;
 
-    public static void refresh() {
-        frame.repaint();        
-    }
-
     public static void playerList(Players knifflers) {
 
         if (!knifflers.player.isEmpty()) {
             JLabel players = new JLabel();
-            String text = Language.playing + " : ";
-
+            StringBuilder text = new StringBuilder(Language.playing + " : ");
+                        
             for (int p = 0; p < knifflers.player.size(); p++) {
-                if (p == knifflers.player.size() -1) text = text + knifflers.player.get(p).name;
-                else text = text + knifflers.player.get(p).name + ", ";
+                if (p == knifflers.player.size() -1) text.append(knifflers.player.get(p).name);
+                else text.append(knifflers.player.get(p).name + ", ");
             }
-            players.setText(text);
+            players.setText(text.toString());
             if (activePlayers != null) {
                 frame.remove(activePlayers);
             }
 
             activePlayers = (frame.add(BorderLayout.SOUTH, players));
             activePlayers.setVisible(true);
-
+            frame.setLocationRelativeTo(null);  
             frame.setVisible(true);
             frame.repaint();
         }
     }
 
     public static void endScore(Players knifflers) {
-        frame.removeAll();
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(3); // JFrame.EXIT_ON_CLOSE
+        frame.setSize(Config.iconLogo.getIconWidth(),Config.iconLogo.getIconHeight()*3); 
+        frame.setTitle(Language.appName);
+        frame.setName(Language.appName); 
+
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+
+        JLabel icon = new JLabel();
+        icon.setIcon(Config.iconLogo);
+        icon.setHorizontalAlignment(SwingConstants.CENTER);
+        icon.setVisible(true);
+        content.add(icon);
+
         JLabel text = new JLabel(Language.endGame);    
         text.setHorizontalAlignment(SwingConstants.CENTER);
-        text.setFont(new Font(Language.font, Font.PLAIN, 18));
-        frame.add(BorderLayout.CENTER, text);
+        text.setFont(new Font(Config.font, Font.BOLD, 18));
+        text.setVisible(true);
+        content.add(text);        
 
         int winner = 0;
         int highestScore = 0;
+
+        JLabel divLabel = new JLabel(Language.horizontalRuler, SwingConstants.CENTER);
+        content.add(divLabel);
+
         for (int p = 0; p < knifflers.player.size(); p++) {
             if (knifflers.player.get(p).sum > highestScore) {
                 highestScore = knifflers.player.get(p).sum;
                 winner = p;
             }
-            JLabel player = new JLabel(knifflers.player.get(p).name + " : " + knifflers.player.get(p).sum);
-
-            player.setVisible(true);
-            frame.add(player);
+            JLabel playerScore = new JLabel(knifflers.player.get(p).name + " : " + knifflers.player.get(p).sum, SwingConstants.CENTER);
+            text.setHorizontalAlignment(SwingConstants.CENTER);
+            text.setFont(new Font(Config.font, Font.PLAIN, 14));
+            playerScore.setVisible(true);
+            content.add(playerScore);            
+            content.setVisible(true);
         }
-
-        JLabel winnerLabel = new JLabel(Language.winnerIs + knifflers.player.get(winner).name + " " + Language.with + " " + knifflers.player.get(winner).sum + " " + Language.points);
+        
+        frame.add(BorderLayout.CENTER, content);
+        JLabel winnerLabel = new JLabel(Language.winnerIs + knifflers.player.get(winner).name + " " + Language.with + " " + knifflers.player.get(winner).sum + " " + Language.points, SwingConstants.CENTER);
+        winnerLabel.setFont(new Font(Config.font, Font.BOLD, 18));
         winnerLabel.setVisible(true);
-        frame.add(winnerLabel);
+        frame.add(BorderLayout.SOUTH, winnerLabel);
 
         frame.setLocationRelativeTo(null);  
+        
         frame.setVisible(true);
-        frame.repaint();
+        
+        
     }
 
     public static void createMainFrame(Players knifflers) {
         frame.setDefaultCloseOperation(3); // JFrame.EXIT_ON_CLOSE
-        frame.setSize(700,600);   
+        frame.setSize(Config.iconLogo.getIconWidth(),Config.iconLogo.getIconHeight()*2);   
         frame.setTitle(Language.appName);
         frame.setName(Language.appName); 
 
         frame.add(BorderLayout.NORTH, new MenuBar(knifflers));
 
+        JPanel content = new JPanel();
+
+        JLabel icon = new JLabel();
+        icon.setIcon(Config.iconLogo);
+        icon.setHorizontalAlignment(SwingConstants.CENTER);
+        icon.setVisible(true);
+        content.add(icon);
+
         JLabel text = new JLabel(Language.welcome);
         text.setHorizontalAlignment(SwingConstants.CENTER);
-        text.setFont(new Font(Language.font, Font.PLAIN, 18));
-        frame.add(BorderLayout.CENTER, text);
+        text.setFont(new Font(Config.font, Font.PLAIN, 18));
+        content.add(text);
+
+        frame.add(BorderLayout.CENTER, content);
 
         playerList(knifflers);
 
-        frame.setLocationRelativeTo(null);  
+        frame.setLocationRelativeTo(null);          
         frame.setVisible(true);
     }
 

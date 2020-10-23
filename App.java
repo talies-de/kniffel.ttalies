@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.Arrays;
+import javax.swing.*;
 
 class KniffelSheet {
     String[] part1 = {Language.ones, Language.twos, Language.threes, Language.fours, Language.fives, Language.sixes};
@@ -7,10 +8,10 @@ class KniffelSheet {
 }
 
 class DiceDeck {
-    Dice[] dice = new Dice[5];
+    Dice[] dice = new Dice[Config.diceAmount];
 
     public DiceDeck() {
-        for (int d = 0; d < 5; d++) {
+        for (int d = 0; d < Config.diceAmount; d++) {
             dice[d] = new Dice();
         }
     }
@@ -72,7 +73,7 @@ class Kniffel {
         Integer count = 0;
         for (int c = 1; c < 7; c++) {
             Integer tempCount = 0;
-            for (int d = 0; d < 5; d++) {
+            for (int d = 0; d < Config.diceAmount; d++) {
                 if (dices[d] == c) tempCount++;
             }
             if (count < amount ) count = tempCount;
@@ -83,11 +84,13 @@ class Kniffel {
     }
 
     private static int getValidDiceSum(Players actualPlayers, Integer playerNumber, String goalName) {
-        Integer goalValue = 0;
+        Integer goalValue = -1;
 
+        if (actualPlayers.player.get(playerNumber).deck.dice[0].getCount() != 0)
+        {
         // alle Würfel aufsummieren
         if (goalName.equals(Language.chance)) {
-            for (int d = 0; d < 5; d++) {
+            for (int d = 0; d < Config.diceAmount; d++) {
                 goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
             }
         }
@@ -104,7 +107,7 @@ class Kniffel {
         if (goalName.equals(Language.threeEquals)) {                                                      
             Boolean valid = countEqualDices(actualPlayers, playerNumber, 3);                        
             if (valid.equals(true)) {
-                for (int d = 0; d < 5; d++) {
+                for (int d = 0; d < Config.diceAmount; d++) {
                     goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
                 }   
             } else goalValue = 0;
@@ -114,7 +117,7 @@ class Kniffel {
         if (goalName.equals(Language.fourEquals)) {                      
             Boolean valid = countEqualDices(actualPlayers, playerNumber, 4);            
             if (valid.equals(true)) {            
-                for (int d = 0; d < 5; d++) {
+                for (int d = 0; d < Config.diceAmount; d++) {
                     goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
                 }
             } else goalValue = 0;
@@ -124,10 +127,11 @@ class Kniffel {
         if (goalName.equals(Language.fullHouse)) {            
             Boolean valid = false;
             Boolean valid1 = false; // Pair of three exists
-            Boolean valid2 = false; // Pair of two exists
-            
+            Boolean valid2 = false; // Pair of two exists                    
+
             // wenn es ein Kniffel ist, ist es auch ein Full House
             Integer[] dices = dicesToArray(actualPlayers, playerNumber);
+
             valid = Arrays.asList(dices).stream().allMatch(t -> t.equals(dices[1]));
 
             if (Boolean.FALSE.equals(valid)) {
@@ -137,7 +141,7 @@ class Kniffel {
                 // prüfe ob es einen Drilling gibt
                 for (int c = 1; c < 7; c++) {
                     Integer tempCount = 0;
-                    for (int d = 0; d < 5; d++) if (dices[d] == c) tempCount++;
+                    for (int d = 0; d < Config.diceAmount; d++) if (dices[d] == c) tempCount++;
                     if (count < 3 ) {
                         count = tempCount;
                         pairOfThree = c;
@@ -150,7 +154,7 @@ class Kniffel {
                     for (int c = 1; c < 7; c++) {
                         if (c != pairOfThree) {
                             Integer tempCount = 0;
-                            for (int d = 0; d < 5; d++) if (dices[d] == c) tempCount++;
+                            for (int d = 0; d < Config.diceAmount; d++) if (dices[d] == c) tempCount++;
                             if (count < 3 ) count = tempCount;       
                         }
                     }
@@ -214,19 +218,23 @@ class Kniffel {
         if (goalName.equals(Language.sixes)) goalCounter = 6;
         
         if (goalCounter > 0) {         
-            for (int d = 0; d < 5; d++) {
+            for (int d = 0; d < Config.diceAmount; d++) {
                 if (actualPlayers.player.get(playerNumber).deck.dice[d].getCount() == goalCounter) {
                     goalValue = goalValue + actualPlayers.player.get(playerNumber).deck.dice[d].getCount();
                 }
             }      
+            if (goalValue == -1) goalValue = 0;
         }
+    } else {
+        JOptionPane.showMessageDialog(null, Language.noDiceThrowMessage, Language.noDiceThrowTitle, JOptionPane.INFORMATION_MESSAGE); 
+    }        
         return goalValue;
     }
 
     public static void updateGoal(Players actualPlayers, Integer playerNumber, String goalName) {
         Integer goalValue = 0;
         
-        goalValue = getValidDiceSum(actualPlayers, playerNumber, goalName);    
+        goalValue = getValidDiceSum(actualPlayers, playerNumber, goalName);            
 
         for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
             if (actualPlayers.player.get(playerNumber).sheet.game.get(i).set.key.equals(goalName)) {                
@@ -357,10 +365,10 @@ class Kniffel {
     public static void sumParts(Players actualPlayers, Integer playerNumber) {        
         String[] listPart1 = new KniffelSheet().part1;
         String[] listPart2 = new KniffelSheet().part2;
-        
-        Integer part1 = actualPlayers.player.get(playerNumber).partSumPart1;
-        Integer part2 = actualPlayers.player.get(playerNumber).sumPart2;
-        
+                
+        Integer part1 = 0;
+        Integer part2 = 0;
+
         for (int i = 0; i < actualPlayers.player.get(playerNumber).sheet.game.size(); i++) {
             String key = actualPlayers.player.get(playerNumber).sheet.game.get(i).set.key;
             if (Arrays.asList(listPart1).contains(key)) {

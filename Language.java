@@ -40,12 +40,14 @@ public class Language {
     static String show = player + " anzeigen";
     static String add = "Hinzufügen";
     static String remove = "Entfernen";
+    static String addAI = "Computer hinzufügen";
     static String about = "Über";
     static String quit = "Beenden";
     static String manual = "Anleitung";
     
     static String added = "hinzugefügt";
     static String addnew = "Neue/r";
+    static String addempty = "Name darf/kann nicht leer sein!";
 
     static String name = "Name";
 
@@ -67,15 +69,16 @@ public class Language {
 
     static String playing = "Es spielen derzeit";
 
-    static String font = "Verdana";
-
-    static String endGame = "Spielende";
+    static String endGame = "Punktestand";
     static String winner = "Gewinner/in";
     static String with = "mit";
     static String winnerIs = "Gewonnen hat ";
     static String points = "Punkten";
 
-    Language(){
-        // only language definition
+    static String noDiceThrowMessage = "Es wurde noch nicht gewürfelt.";
+    static String noDiceThrowTitle = "Kein Wurf";
+
+    private Language() {
+        throw new IllegalStateException("Utility class");
     }
 } 
